@@ -17,5 +17,5 @@ development" landing page.
 - Deployed on [Vercel](https://vercel.com)
 
 ## Author
-
+ 
 **Vishal Singoju**
