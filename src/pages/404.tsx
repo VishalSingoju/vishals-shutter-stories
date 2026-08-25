@@ -1,4 +1,3 @@
-// pages/404.tsx or src/pages/404.tsx
 import React, { useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 
@@ -406,7 +405,7 @@ export default function Custom404() {
             {/* Return Link */}
             <Link
               href="/"
-              onClick={playMechanicalShutter}
+              
               style={{
                 display: 'block',
                 textAlign: 'center',
