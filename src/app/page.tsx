@@ -1,223 +1,189 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
+import MasonryGallery, { MasonryItem } from '@/components/MasonryGallery';
+import { RefreshCw, X, User, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
-export default function Page() {
-  const [formData, setFormData] = useState({ name: "", email: "", idea: "" });
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+export default function Home() {
+  const [items, setItems] = useState<MasonryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('All');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedItem, setSelectedItem] = useState<MasonryItem | null>(null);
 
-  useEffect(() => {
-    console.log("📸 Vishal's Shutter Stories");
-    console.log("🎞️ Website development in progress...");
-    console.log("❤️ Made with love by Vishal Singoju");
-  }, []);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("submitting");
-
+  const fetchPhotos = async () => {
+    setLoading(true);
     try {
-      // Sending data to our Next.js backend API
-      const response = await fetch("/api/ideas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const { data, error } = await supabase
+        .from('photos')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (response.ok) {
-        setStatus("success");
-        setFormData({ name: "", email: "", idea: "" }); // Clear the form
-      } else {
-        setStatus("error");
-      }
-    } catch (error) {
-      console.error("Error submitting idea:", error);
-      setStatus("error");
+      if (error) throw error;
+      if (data) setItems(data);
+    } catch (err) {
+      console.error('Error fetching gallery:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchPhotos();
+  }, []);
+
+  const filteredItems = filter === 'All'
+    ? items
+    : items.filter(item => item.category === filter);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') setSelectedItem(null);
+  }, []);
+
+  useEffect(() => {
+    if (selectedItem) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedItem, handleKeyDown]);
+
   return (
-    <main className="container">
-      <section className="film-frame">
-        <div className="eyebrow">Vishal&apos;s Shutter Stories</div>
-        <h1>Website Under Development</h1>
-        <p className="development">
-          Just like <span>film.</span><br />
-          Good stories take time to develop.
-        </p>
-        <div className="line" />
-        <p className="message">
-          The gallery is currently being developed.<br />
-          Meanwhile, the photographer is probably somewhere chasing good light and pretending it was planned.
-        </p>
-        <span className="shutter" />
-
-        {/* --- UPDATED IDEA SECTION --- */}
-        <div className="idea-section">
-          <h2>Drop an Idea</h2>
-          
-          {status === "success" ? (
-            <div className="success-message">
-              Thank you! Your idea has been saved to the database.
+    <main className="min-h-screen bg-white text-black px-6 py-12 md:px-16 flex flex-col items-center">
+      <div className="w-full max-w-7xl">
+        
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-neutral-200 pb-6 mb-10 gap-6">
+          <div>
+            <div className="flex items-center gap-2 text-neutral-900 text-xs font-semibold tracking-widest uppercase mb-1">
+              
             </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your Name"
-                  required
-                />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="Your Email"
-                  required
-                />
-              </div>
-              <textarea
-                name="idea"
-                value={formData.idea}
-                onChange={handleChange}
-                placeholder="Share your creative thoughts, shoot concepts, or feedback here..."
-                required
-              />
-              <button type="submit" disabled={status === "submitting"}>
-                {status === "submitting" ? "Submitting..." : "Submit Idea"}
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-950">
+              Gallery of Stories
+            </h1>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {['All', 'Landscape', 'Portraits', 'Weddings', 'Street', 'Architecture'].map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-4 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 ${
+                  filter === cat
+                    ? 'bg-black text-white border-black shadow-sm'
+                    : 'bg-neutral-100 text-neutral-600 border-transparent hover:bg-neutral-200 hover:text-black'
+                }`}
+              >
+                {cat}
               </button>
-              {status === "error" && <p className="error-text">Something went wrong. Please try again.</p>}
-            </form>
-          )}
+            ))}
+
+            <button
+              onClick={() => {
+                fetchPhotos();
+                setRefreshKey(k => k + 1);
+              }}
+              className="p-2 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black border border-neutral-200 transition-colors ml-1"
+              title="Refresh & Re-animate"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+
+            <Link
+              href="/admin"
+              className="p-2 rounded-full bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 transition-colors"
+              title="Admin Login & Studio"
+            >
+              <User className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
-        {/* --------------------------- */}
 
-        <div className="footer">
-          Made with love by <strong>Vishal Singoju</strong><br /><br />
-          Vishal&apos;s Shutter Stories
+        {/* Gallery */}
+        {loading ? (
+          <div className="py-24 flex justify-center text-neutral-400">
+            <Loader2 className="w-8 h-8 animate-spin" />
+          </div>
+        ) : filteredItems.length > 0 ? (
+          <MasonryGallery
+            key={refreshKey}
+            items={filteredItems}
+            animateFrom="bottom"
+            blurToFocus={true}
+            stagger={0.06}
+            scaleOnHover={true}
+            hoverScale={0.97}
+            colorShiftOnHover={false}
+            gap={20}
+            onItemClick={(item) => setSelectedItem(item)}
+          />
+        ) : (
+          <div className="py-20 text-center text-neutral-400 text-sm">
+            No photos found in this category. Visit{' '}
+            <Link href="/admin" className="text-black font-semibold underline">
+              Admin
+            </Link>{' '}
+            to upload stories.
+          </div>
+        )}
+      </div>
+
+      {/* Lightbox Modal */}
+      {selectedItem && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 md:p-10 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+          onClick={() => setSelectedItem(null)}
+        >
+          <button
+            onClick={() => setSelectedItem(null)}
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all cursor-pointer z-50"
+            title="Close (Esc)"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div
+            className="relative max-w-5xl max-h-[85vh] flex flex-col items-center justify-center overflow-hidden rounded-2xl bg-neutral-950 border border-neutral-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedItem.img}
+              alt={selectedItem.title || 'Portfolio Image'}
+              className="max-h-[75vh] w-auto object-contain select-none"
+            />
+            
+            {(selectedItem.title || selectedItem.category) && (
+              <div className="w-full px-6 py-4 bg-neutral-950/95 flex items-center justify-between border-t border-neutral-800">
+                <div>
+                  {selectedItem.category && (
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-neutral-400 block">
+                      {selectedItem.category}
+                    </span>
+                  )}
+                  {selectedItem.title && (
+                    <h3 className="text-base font-semibold text-white">
+                      {selectedItem.title}
+                    </h3>
+                  )}
+                </div>
+                <span className="text-xs text-neutral-500 font-mono">
+                  Press ESC or click outside to close
+                </span>
+              </div>
+            )}
+          </div>
         </div>
-      </section>
-
-      <style jsx global>{`
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-          min-height: 100vh;
-          background: #0b0b0b;
-          color: #f5f5f5;
-          font-family: "Inter", sans-serif;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: auto;
-        }
-      `}</style>
-
-      <style jsx>{`
-        .container {
-          width: 90%;
-          max-width: 900px;
-          text-align: center;
-          margin: 40px auto;
-        }
-        .film-frame {
-          border: 1px solid #2a2a2a;
-          padding: 70px 30px;
-          position: relative;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), transparent);
-        }
-        .film-frame::before, .film-frame::after {
-          content: "";
-          position: absolute;
-          left: 0; right: 0; height: 8px;
-          background: repeating-linear-gradient(90deg, #171717 0px, #171717 20px, #0b0b0b 20px, #0b0b0b 35px);
-        }
-        .film-frame::before { top: 0; }
-        .film-frame::after { bottom: 0; }
-        .eyebrow {
-          text-transform: uppercase; letter-spacing: 5px; font-size: 11px; color: #888; margin-bottom: 25px;
-        }
-        h1 {
-          font-family: "Playfair Display", serif; font-size: clamp(42px, 8vw, 82px); font-weight: 400; line-height: 1; margin-bottom: 25px;
-        }
-        .development { font-size: clamp(18px, 3vw, 27px); font-weight: 300; color: #c9c9c9; margin-bottom: 35px; }
-        .development span { color: #fff; font-weight: 500; }
-        .line { width: 70px; height: 1px; background: #555; margin: 0 auto 30px; }
-        .message { max-width: 550px; margin: auto; color: #777; font-size: 14px; line-height: 1.8; }
-        
-        /* --- IDEA SECTION STYLES --- */
-        .idea-section {
-          margin: 50px auto 0;
-          max-width: 550px;
-          padding-top: 40px;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
-          text-align: left;
-        }
-        .idea-section h2 {
-          font-family: "Playfair Display", serif;
-          font-size: 22px; font-weight: 400; color: #e0e0e0; margin-bottom: 20px; text-align: center;
-        }
-        form { display: flex; flex-direction: column; gap: 15px; }
-        
-        .input-group {
-          display: flex; gap: 15px;
-        }
-        
-        input, textarea {
-          width: 100%;
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid #444;
-          color: #f5f5f5;
-          padding: 15px;
-          font-family: "Inter", sans-serif;
-          font-size: 14px;
-          border-radius: 4px;
-          outline: none;
-          transition: border-color 0.3s ease, background 0.3s ease;
-        }
-        
-        textarea { min-height: 120px; resize: vertical; }
-        input::placeholder, textarea::placeholder { color: #666; }
-        input:focus, textarea:focus { border-color: #888; background: rgba(255, 255, 255, 0.06); }
-        
-        button {
-          align-self: center; background: #f5f5f5; color: #0b0b0b; border: none; padding: 12px 30px;
-          font-family: "Inter", sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 1px;
-          text-transform: uppercase; cursor: pointer; border-radius: 2px;
-          transition: background 0.3s ease, transform 0.1s ease;
-        }
-        button:hover:not(:disabled) { background: #d4d4d4; }
-        button:active:not(:disabled) { transform: scale(0.98); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        
-        .success-message {
-          text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid #555; border-radius: 4px; color: #e0e0e0;
-        }
-        .error-text { color: #ff6b6b; font-size: 13px; text-align: center; margin-top: 10px; }
-        /* --------------------------- */
-
-        .footer { margin-top: 50px; font-size: 12px; letter-spacing: 1px; color: #666; }
-        .footer strong { color: #aaa; font-weight: 400; }
-        .shutter {
-          display: inline-block; margin-top: 30px; width: 8px; height: 8px;
-          border: 1px solid #888; border-radius: 50%; animation: blink 2s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
-
-        @media (max-width: 600px) {
-          .film-frame { padding: 60px 20px; }
-          .message { font-size: 13px; }
-          .idea-section { padding-top: 30px; }
-          .input-group { flex-direction: column; }
-        }
-      `}</style>
+      )}
     </main>
   );
 }

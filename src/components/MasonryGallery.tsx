@@ -101,7 +101,7 @@ export const MasonryGallery: React.FC<MasonryGalleryProps> = ({
   scaleOnHover = true,
   hoverScale = 0.96,
   blurToFocus = true,
-  colorShiftOnHover = true,
+  colorShiftOnHover = false,
   gap = 20,
   className,
   itemClassName,
@@ -230,7 +230,7 @@ export const MasonryGallery: React.FC<MasonryGalleryProps> = ({
             else itemRefs.current.delete(item.id);
           }}
           className={cn(
-            'group absolute overflow-hidden cursor-pointer rounded-2xl bg-neutral-900 border border-neutral-800 transition-shadow hover:shadow-2xl will-change-transform',
+            'group absolute overflow-hidden cursor-pointer rounded-2xl bg-neutral-100 border border-neutral-200/80 transition-shadow hover:shadow-xl will-change-transform',
             itemClassName
           )}
           onClick={() => {
@@ -250,13 +250,13 @@ export const MasonryGallery: React.FC<MasonryGalleryProps> = ({
           />
 
           {colorShiftOnHover && (
-            <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/20 via-transparent to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+            <div className="absolute inset-0 bg-neutral-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
           )}
 
           {(item.title || item.category) && (
             <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end translate-y-2 group-hover:translate-y-0">
               {item.category && (
-                <span className="text-[10px] font-semibold tracking-widest uppercase text-amber-400 mb-1">
+                <span className="text-[10px] font-semibold tracking-widest uppercase text-neutral-300 mb-1">
                   {item.category}
                 </span>
               )}
