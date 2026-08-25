@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import MasonryGallery, { MasonryItem } from '@/components/MasonryGallery';
+import { X } from 'lucide-react';
 
 
 const SHUTTER_STORIES: MasonryItem[] = [
