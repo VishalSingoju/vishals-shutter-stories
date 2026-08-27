@@ -6,6 +6,14 @@ import { useState } from 'react';
 export default function NavBar() {
   const [open, setOpen] = useState(false);
 
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "#gallery", label: "Gallery" },
+    { href: "/blogs", label: "Blogs" },
+    { href: "/about", label: "About Me" },
+    { href: "/contact", label: "Contact Me" },
+  ];
+
   return (
     <>
       <header className="w-full border-b border-hairline bg-paper">
@@ -25,7 +33,11 @@ export default function NavBar() {
           </Link>
 
           <nav className="hidden md:flex gap-6 text-graphite">
-            <Link href="/" className="hover:text-ink">Home</Link>
+            {navLinks.map(link => (
+              <Link key={link.href} href={link.href} className="hover:text-ink">
+                {link.label}
+              </Link>
+            ))}
           </nav>
 
           <nav className={`md:hidden fixed left-0 top-0 h-full w-64 bg-paper border-r border-hairline z-40 transform transition-transform ${open ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -38,9 +50,16 @@ export default function NavBar() {
               </button>
               <h2 className="font-display text-2xl mb-6">Menu</h2>
               <div className="flex flex-col gap-4">
-                <Link href="/" onClick={() => setOpen(false)} className="text-ink hover:text-accent">
-                  Home
-                </Link>
+                {navLinks.map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className="block py-2 text-ink hover:text-accent"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
               </div>
             </div>
           </nav>
