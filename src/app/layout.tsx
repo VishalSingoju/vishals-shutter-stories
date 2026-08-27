@@ -1,30 +1,39 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/NavBar";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Editorial serif — swap for GT Sectra / Canela if you own a license,
+// Fraunces is the closest free equivalent with real optical sizing
+const fraunces = Fraunces({
   subsets: ["latin"],
+  variable: "--font-fraunces",
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "Vishal's Shutter Stories",
-  description: "Photography portfolio — website under development",
-
+  title: "Portfolio",
+  description: "Photography portfolio",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
+      <body>
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }

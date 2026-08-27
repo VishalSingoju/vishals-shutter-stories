@@ -2,7 +2,7 @@
 
 A photography portfolio website — currently under development.
 
-🔗 **Live site:** https://vishals-shutter-stories.vercel.app
+🔗 **Live site:** https://vishalsshutterstories.vercel.app
 
 ## About
 
