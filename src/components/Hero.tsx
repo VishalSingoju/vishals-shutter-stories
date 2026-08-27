@@ -33,18 +33,21 @@ export default function Hero({ imageSrc, imageAlt, eyebrow, headline }: HeroProp
           className="object-cover"
           sizes="100vw"
         />
-      </div>
-
-      {/* Calm, restrained text block — the dense grid does the "busy" work
-          elsewhere on the page, so the hero stays quiet and lets one
-          strong image + oversized serif type carry it */}
-      <div className="mx-auto max-w-content px-6 py-18 md:px-12">
-        {eyebrow && (
-          <p className="mb-3 font-body text-sm uppercase tracking-widest text-graphite">
-            {eyebrow}
-          </p>
-        )}
-        <h1 className="text-display-xl text-ink">{headline}</h1>
+        {/* Subtle overlay for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" aria-hidden />
+        {/* Text overlaid on image, centered */}
+        <div className="absolute inset-0 flex items-center justify-center text-center">
+          <div className="mx-auto max-w-content px-6">
+            {eyebrow && (
+              <p className="mb-3 font-body text-sm uppercase tracking-widest text-white/80 drop-shadow">
+                {eyebrow}
+              </p>
+            )}
+            <h1 className="text-display-xl text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)]">
+              {headline}
+            </h1>
+          </div>
+        </div>
       </div>
     </section>
   );

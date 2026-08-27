@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/NavBar";
 
 // Editorial serif — swap for GT Sectra / Canela if you own a license,
 // Fraunces is the closest free equivalent with real optical sizing
@@ -18,8 +19,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Vishal's Shutter Stories",
   description: "Vishal's Photography Portfolio",
+=======
+  title: "Vishal'S Shutter Stories",
+  description: "Vishal'S Photography portfolio",
+>>>>>>> admin
 };
 
 export default function RootLayout({
@@ -29,7 +35,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body>{children}</body>
+      <body>
+        <NavBar />
+        {children}
+      </body>
     </html>
   );
 }
