@@ -1,4 +1,5 @@
 'use client';
+<meta name="strix-verification" content="strix-verify-8351a6541aa917ff2d714682a26ef1b5"></meta>
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
