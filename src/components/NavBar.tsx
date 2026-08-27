@@ -8,10 +8,8 @@ export default function NavBar() {
 
   return (
     <>
-      {/* Normal Top Navigation Bar with integrated burger */}
       <header className="w-full border-b border-hairline bg-paper">
         <div className="max-w-content mx-auto px-6 py-4 flex justify-between items-center">
-          {/* Burger button - part of header, visible on mobile only */}
           <button
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
@@ -26,13 +24,11 @@ export default function NavBar() {
             Vishal's Shutter Stories
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex gap-6 text-graphite">
             <Link href="/" className="hover:text-ink">Home</Link>
             <Link href="/admin" className="hover:text-ink">Admin</Link>
           </nav>
 
-          {/* Mobile nav - shown when burger open */}
           <nav className={`md:hidden fixed left-0 top-0 h-full w-64 bg-paper border-r border-hairline z-40 transform transition-transform ${open ? 'translate-x-0' : '-translate-x-full'}`}>
             <div className="p-6 pt-20">
               <button
@@ -55,12 +51,8 @@ export default function NavBar() {
         </div>
       </header>
 
-      {/* Overlay */}
       {open && (
-        <div
-          className="fixed inset-0 bg-black/30 z-30"
-          onClick={() => setOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/30 z-30" onClick={() => setOpen(false)} />
       )}
     </>
   );

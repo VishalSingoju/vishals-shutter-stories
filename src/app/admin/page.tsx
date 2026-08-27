@@ -18,7 +18,16 @@ export default function AdminPage() {
   const [files, setFiles] = useState<Photo[]>([]);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
+  const [user, setUser] = useState<any>(null);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   const loadFiles = async () => {
     const { data, error } = await supabase.storage.from('photos').list('uploads', {
@@ -75,9 +84,24 @@ export default function AdminPage() {
     loadFiles();
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <main className="min-h-screen bg-paper text-ink p-8">
-      <h1 className="font-display text-display-lg mb-6">Admin – Photo Management</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="font-display text-display-lg">Admin – Photo Management</h1>
+        {user ? (
+          <button onClick={handleLogout} className="px-4 py-2 border border-hairline rounded hover:bg-ink hover:text-paper">
+            Logout
+          </button>
+        ) : (
+          <a href="/login" className="px-4 py-2 border border-hairline rounded hover:bg-ink hover:text-paper">
+            Login
+          </a>
+        )}
+      </div>
 
       <section className="mb-8">
         <h2 className="font-display text-2xl mb-3">Upload new photo</h2>
