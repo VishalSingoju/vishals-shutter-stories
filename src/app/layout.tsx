@@ -19,8 +19,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "Photography portfolio",
+  title: "Vishal'S Shutter Stories",
+  description: "Vishal'S Photography portfolio",
 };
 
 export default function RootLayout({

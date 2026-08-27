@@ -26,7 +26,6 @@ export default function NavBar() {
 
           <nav className="hidden md:flex gap-6 text-graphite">
             <Link href="/" className="hover:text-ink">Home</Link>
-            <Link href="/admin" className="hover:text-ink">Admin</Link>
           </nav>
 
           <nav className={`md:hidden fixed left-0 top-0 h-full w-64 bg-paper border-r border-hairline z-40 transform transition-transform ${open ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -41,9 +40,6 @@ export default function NavBar() {
               <div className="flex flex-col gap-4">
                 <Link href="/" onClick={() => setOpen(false)} className="text-ink hover:text-accent">
                   Home
-                </Link>
-                <Link href="/admin" onClick={() => setOpen(false)} className="text-ink hover:text-accent">
-                  Admin
                 </Link>
               </div>
             </div>
