@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [files, setFiles] = useState<Photo[]>([]);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
+  const formRef = useRef<HTMLFormElement>(null);
 
   const loadFiles = async () => {
     const { data, error } = await supabase.storage.from('photos').list('uploads', {
@@ -61,7 +62,7 @@ export default function AdminPage() {
     }
     setMessage('Uploaded successfully');
     loadFiles();
-    e.currentTarget.reset();
+    formRef.current?.reset();
   };
 
   const handleDelete = async (name: string) => {
@@ -80,7 +81,7 @@ export default function AdminPage() {
 
       <section className="mb-8">
         <h2 className="font-display text-2xl mb-3">Upload new photo</h2>
-        <form onSubmit={handleUpload} className="flex gap-3 items-end">
+        <form ref={formRef} onSubmit={handleUpload} className="flex gap-3 items-end">
           <input name="file" type="file" accept="image/*" required />
           <button
             type="submit"
