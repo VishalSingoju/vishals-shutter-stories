@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 
-// Temporary in-memory / state store (replace with Supabase, Prisma, or Mongo in production)
+// Photos data with Cloudinary URLs
+// TODO: Replace these placeholder URLs with your actual Cloudinary image URLs
 let photos = [
-  { id: '1', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1400', height: 450, title: 'Mountain Silence', category: 'Landscape' },
-  { id: '2', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=1400', height: 300, title: 'Golden Hour Portrait', category: 'Portraits' },
-  { id: '3', img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=1400', height: 520, title: 'The Vows', category: 'Weddings' },
+  { id: '1', img: 'https://res.cloudinary.com/dqzlgkrrq/image/upload/v1788455543/main-sample.png', height: 450, title: 'Mountain Silence', category: 'Landscape' },
+  { id: '2', img: 'https://res.cloudinary.com/dqzlgkrrq/image/upload/v1752101362/IMG_4178_x183k1.jpg', height: 300, title: 'Symmetrical Beauty', category: 'Portraits' },
+  
 ];
 
 export async function GET() {
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
       height: height || 400,
     };
 
-    photos.unshift(newPhoto); // Add to the beginning of the list
+    photos.unshift(newPhoto);
 
     return NextResponse.json({ success: true, photo: newPhoto }, { status: 201 });
   } catch (error) {
