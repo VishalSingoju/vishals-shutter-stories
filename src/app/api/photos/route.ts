@@ -1,46 +1,64 @@
 import { NextResponse } from 'next/server';
+import { v2 as cloudinary } from 'cloudinary';
+import { addPhoto, removePhoto as removeStoredPhoto } from '@/utilities/photosStore';
 
-// Photos data with Cloudinary URLs
-// TODO: Replace these placeholder URLs with your actual Cloudinary image URLs
-let photos = [
-  { id: '1', img: 'https://res.cloudinary.com/dqzlgkrrq/image/upload/v1788455543/main-sample.png', height: 450, title: 'Mountain Silence', category: 'Landscape' },
-  { id: '2', img: 'https://res.cloudinary.com/dqzlgkrrq/image/upload/v1752101362/IMG_4178_x183k1.jpg', height: 300, title: 'Symmetrical Beauty', category: 'Portraits' },
-  
-];
-
-export async function GET() {
-  return NextResponse.json(photos);
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  api_key: process.env.CLOUDINARY_API_KEY!,
+  api_secret: process.env.CLOUDINARY_API_SECRET!,
+});
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { img, title, category, height } = body;
+  // basic auth guard – token is sent as `Authorization: Bearer ...`
+  const auth = request.headers.get('authorization');
+  if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (!img) {
-      return NextResponse.json({ error: 'Image URL is required' }, { status: 400 });
+  const form = await request.formData();
+  const file = form.get('file') as File | null;
+  const title = form.get('title') as string | null;
+  const description = form.get('description') as string | null;
+
+  if (!file) return NextResponse.json({ error: 'File required' }, { status: 400 });
+
+  const buffer = await file.arrayBuffer();
+
+  // Upload to Cloudinary – we use the raw buffer to avoid another HTTP round‑trip
+  const result = await cloudinary.uploader.upload_stream(
+    {
+      folder: 'vishal-gallery',
+      use_filename: true,
+      public_id: `photo-${Date.now()}`,
+    },
+    async (err, uploadResult) => {
+      if (err || !uploadResult) {
+        throw err ?? new Error('Cloudinary upload failed');
+      }
+      const newPhoto = {
+        id: Date.now().toString(),
+        img: uploadResult.secure_url,
+        title: title ?? '',
+        description: description ?? '',
+        category: 'Uploaded',
+        height: 400,
+      };
+      addPhoto(newPhoto);
     }
+  );
 
-    const newPhoto = {
-      id: Date.now().toString(),
-      img,
-      title: title || 'Untitled Story',
-      category: category || 'Landscape',
-      height: height || 400,
-    };
+  result.end(Buffer.from(buffer));
 
-    photos.unshift(newPhoto);
-
-    return NextResponse.json({ success: true, photo: newPhoto }, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to upload photo' }, { status: 500 });
-  }
+  return NextResponse.json({ message: 'Uploaded', status: 201 });
 }
 
 export async function DELETE(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get('id');
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
 
-  photos = photos.filter(p => p.id !== id);
+  removePhoto(id);
   return NextResponse.json({ success: true });
+}
+
+function removePhoto(id: string) {
+  removeStoredPhoto(id);
 }

@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -7,11 +6,11 @@ export default function NavBar() {
   const [open, setOpen] = useState(false);
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "#gallery", label: "Gallery" },
-    { href: "/blogs", label: "Blogs" },
-    { href: "/about", label: "About Me" },
-    { href: "/contact", label: "Contact Me" },
+    { href: '/', label: 'Home' },
+    { href: '/#gallery', label: 'Gallery' },   // <-- changed
+    { href: '/blogs', label: 'Blogs' },
+    { href: '/about', label: 'About Me' },
+    { href: '/contact', label: 'Contact Me' },
   ];
 
   return (
@@ -33,24 +32,23 @@ export default function NavBar() {
           </Link>
 
           <nav className="hidden md:flex gap-6 text-graphite">
-            {navLinks.map(link => (
+            {navLinks.map((link) => (
               <Link key={link.href} href={link.href} className="hover:text-ink">
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <nav className={`md:hidden fixed left-0 top-0 h-full w-64 bg-paper border-r border-hairline z-40 transform transition-transform ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+          <nav
+            className={`md:hidden fixed left-0 top-0 h-full w-64 bg-paper border-r border-hairline z-40 transform transition-transform ${open ? 'translate-x-0' : '-translate-x-full'}`}
+          >
             <div className="p-6 pt-20">
-              <button
-                onClick={() => setOpen(false)}
-                className="absolute top-4 right-4 p-2"
-              >
+              <button onClick={() => setOpen(false)} className="absolute top-4 right-4 p-2">
                 ✕
               </button>
               <h2 className="font-display text-2xl mb-6">Menu</h2>
               <div className="flex flex-col gap-4">
-                {navLinks.map(link => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -64,11 +62,9 @@ export default function NavBar() {
             </div>
           </nav>
         </div>
-      </header>
 
-      {open && (
-        <div className="fixed inset-0 bg-black/30 z-30" onClick={() => setOpen(false)} />
-      )}
+        {open && <div className="fixed inset-0 bg-black/30 z-30" onClick={() => setOpen(false)} />}
+      </header>
     </>
   );
 }
