@@ -48,7 +48,7 @@ export default function ParallaxSection() {
     >
       <div
         data-parallax-depth="-30"
-        className="absolute inset-0 bg-cover bg-center opacity-20 scale-110"
+        className="absolute inset-0 bg-cover bg-center opacity-20 scale-110 pointer-events-none"
         style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1600)' }}
       />
 

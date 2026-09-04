@@ -1,136 +1,128 @@
 'use client';
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
+import { X, MapPin, Sparkles } from 'lucide-react';
 
-type Photo = {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  title?: string;
-  description?: string;
-  category?: string;
-};
+export interface GalleryItem {
+  id: string;
+  img: string;
+  title: string;
+  category: 'People' | 'Weddings' | 'Wildlife';
+  location: string;
+  description: string;
+}
 
-export default function MasonryGallery({ photos }: { photos: Photo[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState<Set<number>>(new Set());
-  const [active, setActive] = useState<Photo | null>(null);
+export default function MasonryGallery({ items }: { items: GalleryItem[] }) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [activeItem, setActiveItem] = useState<GalleryItem | null>(null);
 
-  // lock body scroll & Esc to close lightbox
   useEffect(() => {
-    if (active) {
-      document.body.style.overflow = 'hidden';
-      const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setActive(null); };
-      window.addEventListener('keydown', onKey);
-      return () => {
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', onKey);
-      };
-    }
-  }, [active]);
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll('.gallery-card');
 
-  // fade-in on scroll
-  useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      setVisible(new Set(photos.map((_, i) => i)));
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        setVisible((prev) => {
-          const next = new Set(prev);
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              const idx = Number(e.target.getAttribute('data-index'));
-              next.add(idx);
-            }
-          });
-          return next;
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 30, scale: 0.98 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.8,
+        stagger: 0.08,
+        ease: 'power2.out',
+      }
     );
-    const nodes = containerRef.current?.querySelectorAll('[data-index]');
-    nodes?.forEach((n) => observer.observe(n));
-    return () => observer.disconnect();
-  }, [photos.length]);
+  }, [items]);
 
   return (
-    <>
-      <div className="max-w-content mx-auto px-6 md:px-12 py-12 md:py-18">
-        <div ref={containerRef} className="columns-2 gap-2 md:columns-3 md:gap-3 lg:columns-4 [column-gap:16px] md:[column-gap:24px]">
-          {photos.map((photo, i) => {
-            const inView = visible.has(i);
-            return (
-              <div
-                key={i}
-                data-index={i}
-                className="mb-2 break-inside-avoid md:mb-3 group cursor-pointer relative"
-                style={{
-                  opacity: inView ? 1 : 0,
-                  transform: inView ? 'translateY(0)' : 'translateY(12px)',
-                  transition: 'opacity 600ms ease, transform 600ms ease',
-                  transitionDelay: `${Math.min(i, 20) * 40}ms`,
-                }}
-                onClick={() => setActive(photo)}
-              >
-                <div className="overflow-hidden rounded relative">
-                  <Image
-                    src={photo.src}
-                    alt={photo.alt}
-                    width={photo.width}
-                    height={photo.height}
-                    className="w-full h-auto block transition-opacity duration-500 group-hover:opacity-60"
-                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+    <div id="gallery" className="w-full max-w-7xl mx-auto px-6 py-16">
+      <div
+        ref={gridRef}
+        className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6 space-y-6"
+      >
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className="gallery-card break-inside-avoid overflow-hidden rounded-2xl bg-[#EFECE6] cursor-pointer shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative group"
+            onClick={() => setActiveItem(item)}
+          >
+            <HoverCard openDelay={100} closeDelay={150}>
+              <HoverCardTrigger asChild>
+                <div className="relative w-full overflow-hidden">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    loading="lazy"
+                    className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
-                  {(photo.title || photo.description || photo.category) && (
-                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {photo.title && <p className="text-white font-display text-sm">{photo.title}</p>}
-                      {photo.category && <p className="text-white/80 text-xs uppercase tracking-wide">{photo.category}</p>}
-                      {photo.description && <p className="text-white/80 text-xs mt-1 line-clamp-2">{photo.description}</p>}
-                    </div>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-5 flex flex-col justify-end">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-[#C4623D]">
+                      {item.category}
+                    </span>
+                    <h3 className="text-white text-base font-editorial font-normal">{item.title}</h3>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
+              </HoverCardTrigger>
+
+              <HoverCardContent
+                side="top"
+                className="w-72 rounded-xl bg-[#1C1917]/95 backdrop-blur-md p-4 text-[#FAF7F2] border border-white/10 shadow-2xl z-50"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[#C4623D]">
+                    {item.category}
+                  </span>
+                  <Sparkles size={13} className="text-[#C4623D]" />
+                </div>
+                <h4 className="font-editorial text-base font-normal mt-1">{item.title}</h4>
+                <p className="mt-1 text-xs text-stone-300 font-light leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="mt-3 flex items-center gap-1.5 text-[11px] text-stone-400">
+                  <MapPin size={12} />
+                  <span>{item.location}</span>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          </div>
+        ))}
       </div>
 
-      {/* Lightbox */}
-      {active && (
+      {/* Lightbox Preview Modal */}
+      {activeItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 backdrop-blur-sm"
-          onClick={() => setActive(null)}
-          aria-modal="true"
-          role="dialog"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm"
+          onClick={() => setActiveItem(null)}
         >
-          <button
-            aria-label="Close"
-            className="absolute top-6 right-6 text-paper text-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
-            onClick={(e) => { e.stopPropagation(); setActive(null); }}
+          <div
+            className="relative max-h-[92vh] max-w-4xl overflow-hidden rounded-2xl bg-[#1C1917] p-6 text-[#FAF7F2] shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
           >
-            ✕
-          </button>
-          <div className="relative max-w-[90vw] max-h-[90vh] p-4" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setActiveItem(null)}
+              className="absolute right-5 top-5 z-20 rounded-full bg-black/50 p-2 text-white hover:bg-black transition-colors"
+            >
+              <X size={18} />
+            </button>
             <img
-              src={active.src}
-              alt={active.alt}
-              className="max-w-full max-h-[90vh] w-auto h-auto object-contain rounded shadow-2xl"
+              src={activeItem.img}
+              alt={activeItem.title}
+              className="max-h-[65vh] w-full rounded-xl object-contain bg-black/30"
             />
-            {(active.title || active.description || active.category) && (
-              <div className="mt-3 text-center text-paper">
-                {active.title && <p className="font-display text-lg">{active.title}</p>}
-                {active.category && <p className="text-xs uppercase tracking-wide text-paper/80">{active.category}</p>}
-                {active.description && <p className="text-sm text-paper/80 mt-1 max-w-2xl mx-auto">{active.description}</p>}
-              </div>
-            )}
+            <div className="mt-5 px-1">
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#C4623D]">
+                {activeItem.category} • {activeItem.location}
+              </span>
+              <h2 className="font-editorial text-2xl font-light mt-1">{activeItem.title}</h2>
+              <p className="mt-2 text-sm text-stone-300 font-light leading-relaxed">
+                {activeItem.description}
+              </p>
+            </div>
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
