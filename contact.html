@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Contact Vishal's Shutter Stories for portrait, wedding and wildlife print inquiries.">
+  <meta name="theme-color" content="#11110f">
+  <title>Inquire | Vishal's Shutter Stories</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav container" aria-label="Primary navigation">
+      <a class="logo" href="index.html">Shutter Stories<span>.</span></a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links" aria-label="Open menu">Menu</button>
+      <div id="nav-links" class="nav-links">
+        <a href="index.html">Work</a>
+        <a href="about.html">Story</a>
+        <a class="active" href="contact.html">Inquire</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero container">
+      <div class="section-label">05 / Inquire</div>
+      <h1>Let's talk about what you're planning.</h1>
+      <p>Tell me a little about the people, place, date, and story. I'll get back to you with the next steps.</p>
+    </section>
+
+    <section class="contact-section section container">
+      <div class="contact-intro">
+        <p class="eyebrow">Begin a conversation</p>
+        <h2>Good photographs start with knowing what matters.</h2>
+        <p>Portraits, weddings, and wildlife print inquiries are welcome. The form below is intentionally simple because nobody needs a 47-field contact form to ask about photography.</p>
+        <div class="contact-details">
+          <a href="mailto:contact@vishalsshutterstories.com">contact@vishalsshutterstories.com</a>
+          <span>Hyderabad, India</span>
+        </div>
+      </div>
+
+      <form id="contact-form" class="contact-form" novalidate>
+        <input type="hidden" name="access_key" value="858665d3-60c3-4186-a05f-712011296c72">
+        <input type="hidden" name="subject" value="New inquiry — Vishal's Shutter Stories">
+        <input type="hidden" name="from_name" value="Vishal's Shutter Stories Website">
+        <input type="hidden" name="botcheck" value="">
+
+        <div class="form-grid">
+          <label>
+            Name *
+            <input type="text" name="name" autocomplete="name" required>
+            <small class="field-error" data-error-for="name"></small>
+          </label>
+
+          <label>
+            Email *
+            <input type="email" name="email" autocomplete="email" required>
+            <small class="field-error" data-error-for="email"></small>
+          </label>
+
+          <label>
+            Phone
+            <input type="tel" name="phone" autocomplete="tel">
+            <small class="field-error" data-error-for="phone"></small>
+          </label>
+
+          <label>
+            Event / Session Type *
+            <select name="session_type" required>
+              <option value="">Select one</option>
+              <option value="Portrait">Portrait</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Wildlife Print">Wildlife Print</option>
+              <option value="Other">Other</option>
+            </select>
+            <small class="field-error" data-error-for="session_type"></small>
+          </label>
+
+          <label>
+            Event Date
+            <input type="date" name="event_date">
+            <small class="field-error" data-error-for="event_date"></small>
+          </label>
+
+          <label>
+            Location / Venue
+            <input type="text" name="location" autocomplete="street-address">
+            <small class="field-error" data-error-for="location"></small>
+          </label>
+
+          <label class="full">
+            Message *
+            <textarea name="message" rows="7" required placeholder="Tell me what you're planning..."></textarea>
+            <small class="field-error" data-error-for="message"></small>
+          </label>
+        </div>
+
+        <button class="button button-dark" type="submit" id="submit-button">
+          Send Inquiry <span>↗</span>
+        </button>
+
+        <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="logo" href="index.html">Shutter Stories<span>.</span></a>
+        <p>Editorial photography rooted in honest moments, natural light, and human connection.</p>
+      </div>
+      <div class="footer-links">
+        <a href="portraits.html">Portraits</a>
+        <a href="weddings.html">Weddings</a>
+        <a href="wildlife.html">Wildlife</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© <span data-year></span> Vishal's Shutter Stories</span>
+      <span>Hyderabad, India</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+  <script src="js/contact.js" defer></script>
+</body>
+</html>
