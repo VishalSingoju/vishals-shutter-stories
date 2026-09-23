@@ -158,6 +158,14 @@ button { cursor: pointer; }
   color: var(--paper-soft);
   font-size: 17px;
 }
+@media (max-width: 800px) {
+  .hero {
+    min-height: 70vh;
+  }
+  .hero-image {
+    object-position: center 20%;
+  }
+}
 
 .button {
   display: inline-flex;
@@ -342,6 +350,42 @@ button { cursor: pointer; }
 .site-footer {
   padding: 65px 0 25px;
   border-top: 1px solid var(--line);
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 50px;
+  align-items: start;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.footer-socials a {
+  color: var(--muted);
+  transition: color .2s ease;
+}
+
+.footer-socials a:hover {
+  color: var(--accent);
+}
+
+.footer-socials svg {
+  display: block;
+}
+
+@media (max-width: 800px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .footer-socials {
+    order: 3;
+  }
 }
 
 .footer-grid {
