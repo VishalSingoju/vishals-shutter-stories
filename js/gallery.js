@@ -16,7 +16,7 @@ const GALLERIES = {
     { src: "assets/images/weddings/wedding-06.webp", alt: "Wedding celebration", caption: "Wedding · Celebration" }
   ],
   wildlife: [
-    { src: "assets/images/wildlife/wildlife-01.webp", alt: "Bird photographed in the wild", caption: "Wildlife · Bird" },
+    { src: "https://res.cloudinary.com/dqzlgkrrq/image/upload/2K2A4151_polarr_pbzu7v.jpg", alt: "Bird photographed in the wild", caption: "Indian Spotted Owlet" },
     { src: "assets/images/wildlife/wildlife-02.webp", alt: "Bird in natural habitat", caption: "Wildlife · Habitat" },
     { src: "assets/images/wildlife/wildlife-03.webp", alt: "Wildlife detail", caption: "Wildlife · Detail" },
     { src: "assets/images/wildlife/wildlife-04.webp", alt: "Bird portrait", caption: "Wildlife · Portrait" },
